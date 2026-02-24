@@ -28,9 +28,13 @@ cd Django-Warzone
    SECRET_KEY = 'django-insecure-t+%j)0kc6km9)87$d=2)6zsypy&@fvzzz1a&(m8%f77\*11+p8b'
 
    DB_NAME=warzone
+
    DB_USER=postgres
+
    DB_PASSWORD=postgres
+
    DB_HOST=localhost
+
    DB_PORT=5433
 
    ⚠️ You can change to any other database, make sure to update settings.py and .env
