@@ -22,14 +22,17 @@ cd Django-Warzone
 
 ## Django Setup
 
-1. **Make migrations**
+1. **Update .env Database Credentials**
+   ⚠️ Make sure to change all .env DB\_\* to your local postgres database, you can change to any database
+   by replacing in settings.py
+
+2. **Make migrations**
    python manage.py makemigrations
    python manage.py migrate
 
-2. **Create a superuser**
-   python manage.py createsuperuser
-
-⚠️ Make sure to provide an email when creating the superuser — required for OTP/email functionality.
-
 3. **Create a superuser**
+   python manage.py createsuperuser
+   ⚠️ Make sure to provide an email when creating the superuser — required for OTP/email functionality.
+
+4. **Create a superuser**
    python manage.py runserver
