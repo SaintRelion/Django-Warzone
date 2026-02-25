@@ -1,6 +1,4 @@
 from django.db import models
-
-from sr_libs.dal.resource import register_resource
 from sr_libs.dal.mixins import ArchiveMixin
 
 
@@ -37,17 +35,3 @@ class SupportTicket(ArchiveMixin):
         related_name="assigned_support_tickets",
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-register_resource(
-    name="supportticket",
-    model=SupportTicket,
-    operations={
-        "list": True,
-        "retrieve": "__all__",
-        "create": "__all__",
-        "update": "__all__",
-        "delete": False,
-        "archive": True,
-    },
-)

@@ -1,7 +1,6 @@
 from django.db import models
 from sr_libs.dal.mixins import ArchiveMixin
-from sr_libs.dal.resource import register_resource
-from .billing import Billing
+from ..billing.models import Billing
 
 
 class PaymentHistory(ArchiveMixin):
@@ -46,17 +45,3 @@ class PaymentHistory(ArchiveMixin):
 
     def __str__(self):
         return f"Payment {self.id} for Bill {self.bill_id} by User {self.user_id}"
-
-
-register_resource(
-    name="paymenthistory",
-    model=PaymentHistory,
-    operations={
-        "list": True,
-        "retrieve": "__all__",
-        "create": "__all__",
-        "update": "__all__",
-        "delete": False,
-        "archive": True,
-    },
-)

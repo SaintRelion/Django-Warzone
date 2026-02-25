@@ -14,20 +14,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-from sr_libs.accounts.settings import *
+from sr_libs.authentication.settings import *
 
 ACCOUNTS_MIDDLEWARE = MIDDLEWARE
-ACCOUNTS_ME = ME
-ME = [
-    *ACCOUNTS_ME,
-    "first_name",
-    "last_name",
-    "phone_number",
-    "street_address",
-    "city_municipality",
-    "zip_code",
-    "service_area",
-]
 
 ACCOUNTS_SIMPLE_JWT = SIMPLE_JWT
 SIMPLE_JWT = {
@@ -35,8 +24,12 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
 }
 
-from sr_libs.fingerprint.settings import *
-from sr_libs.otp_sms.settings import *
+from sr_libs.delivery_channels.settings import *
+
+EMAIL_HOST_USER = "pyromaniac33143@gmail.com"
+EMAIL_HOST_PASSWORD = "lgun rdsg lwye vfvd"
+
+AUTH_USER_MODEL = "accounts.User"
 
 load_dotenv()
 
@@ -66,11 +59,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third parties
-    "sr_libs.accounts",
-    "sr_libs.fingerprint",
-    "sr_libs.otp_sms",
+    "sr_libs.authentication",
+    "sr_libs.otp",
+    "sr_libs.delivery_channels",
     "sr_libs.dal",
-    "dal_resources",
+    "accounts",
+    "resources",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",

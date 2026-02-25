@@ -1,11 +1,9 @@
 from sr_libs.dal.resource import register_resource
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from .models import PaymentHistory
 
 register_resource(
-    name="user",
-    model=User,
+    name="paymenthistory",
+    model=PaymentHistory,
     operations={
         "list": True,
         "retrieve": "__all__",

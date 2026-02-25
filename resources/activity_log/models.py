@@ -1,5 +1,4 @@
 from django.db import models
-from sr_libs.dal.resource import register_resource
 
 
 class ActivityLog(models.Model):
@@ -53,17 +52,3 @@ class ActivityLog(models.Model):
             self.user.username if self.user else "Unknown User"
         )
         return f"[{self.created_at}] {user_str} - {self.action}"
-
-
-register_resource(
-    name="activitylog",
-    model=ActivityLog,
-    operations={
-        "list": True,
-        "retrieve": "__all__",
-        "create": "__all__",
-        "update": "__all__",
-        "delete": False,
-        "archive": True,
-    },
-)
