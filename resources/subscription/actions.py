@@ -1,4 +1,3 @@
-from ..billing.models import Billing
 from sr_libs.delivery_channels.services.email import send_email
 import logging
 
@@ -6,6 +5,8 @@ logger = logging.getLogger(__name__)
 
 
 def create_initial_billing(subscription, **kwargs):
+    from ..billing.models import Billing
+
     Billing.objects.create(
         user=subscription.user,
         subscription=subscription,
