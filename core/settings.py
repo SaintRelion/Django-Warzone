@@ -31,8 +31,17 @@ EMAIL_HOST_PASSWORD = "lgun rdsg lwye vfvd"
 
 AUTH_USER_MODEL = "accounts.User"
 
+from sr_libs.model_trigger.settings import *
+
 load_dotenv()
 
+# SMS
+API_KEY = os.getenv("API_KEY")
+SMS_SENDER_NAME = os.getenv("SMS_SENDER_NAME")
+OTP_EXPIRY_SECONDS = int(os.getenv("OTP_EXPIRY_SECONDS"))
+MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS"))
+
+# ============== DJANGO DEFAULTS ================
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -58,11 +67,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Client Specific
+    "otp_sms",
     # Third parties
     "sr_libs.authentication",
     "sr_libs.otp",
     "sr_libs.delivery_channels",
     "sr_libs.dal",
+    "sr_libs.model_trigger",
     "accounts",
     "resources",
     "rest_framework",
