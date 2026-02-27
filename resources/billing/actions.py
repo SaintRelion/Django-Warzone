@@ -5,7 +5,7 @@ from sr_libs.delivery_channels.services.email import send_email
 logger = logging.getLogger(__name__)
 
 
-def send_due_reminder(bill, **kwargs):
+def send_due_reminder(bill):
     remaining = bill.due_date - timezone.now().date()
 
     subject = "Upcoming Bill Due"

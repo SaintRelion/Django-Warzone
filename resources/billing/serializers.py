@@ -13,7 +13,7 @@ class UserBillingDerivedSerializer(DerivedSerializer):
     user_id = serializers.IntegerField(required=False)
     subscription_id = serializers.IntegerField(required=False)
     status = serializers.ChoiceField(
-        choices=["Paid", "Partially Paid", "Unpaid", "Overdue"], required=False
+        choices=["paid", "partially_paid", "unpaid", "overdue"], required=False
     )
 
     @classmethod
@@ -31,7 +31,7 @@ class UserBillingDerivedSerializer(DerivedSerializer):
 
         # Prefetch payments
         payments_qs = PaymentHistory.objects.filter(
-            status="Completed", bill_id__in=billings_qs.values_list("id", flat=True)
+            status="completed", bill_id__in=billings_qs.values_list("id", flat=True)
         )
         payments_by_bill = {}
         for p in payments_qs:
@@ -49,19 +49,19 @@ class UserBillingDerivedSerializer(DerivedSerializer):
 
             if total_paid == 0:
                 status = (
-                    "Overdue" if timezone.now().date() > bill.due_date else "Unpaid"
+                    "overdue" if timezone.now().date() > bill.due_date else "unpaid"
                 )
             elif remaining > 0:
-                status = "Partially Paid"
+                status = "partially_paid"
             else:
-                status = "Paid"
+                status = "paid"
 
             results.append(
                 {
                     "id": bill.id,
                     "subscription": bill.subscription_id,
                     "user": bill.user_id,
-                    "plan": bill.plan,
+                    "plan": bill.plan_id,
                     "customer": f"{u.first_name} {u.last_name}" if u else "",
                     "amount": bill.amount,
                     "due_date": bill.due_date,

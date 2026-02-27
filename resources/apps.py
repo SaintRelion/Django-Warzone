@@ -15,8 +15,10 @@ class ResourcesConfig(AppConfig):
         import resources.subscription.serializers
         import resources.support_ticket.serializers
         import resources.user.serializers
+        import resources.plan.serializers
 
         # Triggers
         import resources.subscription.triggers
+        import resources.billing.triggers
 
         setup_model_signals()

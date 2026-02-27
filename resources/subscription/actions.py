@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def create_initial_billing(subscription, **kwargs):
+def create_initial_billing(subscription):
     from ..billing.models import Billing
 
     Billing.objects.create(

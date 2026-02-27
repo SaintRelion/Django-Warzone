@@ -33,7 +33,7 @@ class PaymentHistory(ArchiveMixin):
     # Creation timestamp
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Status (Completed, Pending, Failed, etc.)
+    # Status (completed, pending, failed, etc.)
     status = models.CharField(max_length=50)
 
     # Optional void info
