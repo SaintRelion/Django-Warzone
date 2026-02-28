@@ -16,6 +16,7 @@ import os
 
 from sr_libs.authentication.settings import *
 
+CORS_ALLOW_HEADERS = ["*"]
 ACCOUNTS_MIDDLEWARE = MIDDLEWARE
 
 ACCOUNTS_SIMPLE_JWT = SIMPLE_JWT

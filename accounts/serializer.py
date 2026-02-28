@@ -16,6 +16,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
     def create(self, validated_data):
+        request = self.context.get("request")
+        print(request)
+
         roles = validated_data.pop("roles", [])
         password = validated_data.pop("password")
 

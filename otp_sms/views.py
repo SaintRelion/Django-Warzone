@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.conf import settings
 
 from otp_sms.utils import create_sms_otp, send_sms_otp
+from sr_libs.authentication.models import UserDevice
 
 User = get_user_model()
 
@@ -29,6 +30,28 @@ class SendSMSOTP(APIView):
             return Response(
                 {"detail": "User not found."},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        device_id = request.headers.get("X-Device-ID")
+        user_agent = request.META.get("HTTP_USER_AGENT")
+        ip_address = request.META.get("REMOTE_ADDR")
+
+        device = None
+        is_trusted = False
+
+        if device_id:
+            device = UserDevice.objects.filter(
+                user=user, user_agent=user_agent, ip_address=ip_address
+            ).first()
+
+            if device:
+                is_trusted = device.is_trusted
+
+        # ✅ If trusted device → no OTP needed
+        if is_trusted:
+            return Response(
+                {"is_trusted": True, "detail": "Trusted device. OTP not required."},
+                status=status.HTTP_200_OK,
             )
 
         # Create OTP using your existing function
