@@ -27,8 +27,8 @@ SIMPLE_JWT = {
 
 from sr_libs.delivery_channels.settings import *
 
-EMAIL_HOST_USER = "pyromaniac33143@gmail.com"
-EMAIL_HOST_PASSWORD = "lgun rdsg lwye vfvd"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -67,8 +67,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Client Specific
-    "otp_sms",
+    # Third Parties
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     # Third parties
     "sr_libs.authentication",
     "sr_libs.otp",
@@ -77,9 +79,7 @@ INSTALLED_APPS = [
     "sr_libs.model_trigger",
     "accounts",
     "resources",
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
+    "otp_sms",
 ]
 
 MIDDLEWARE = [
