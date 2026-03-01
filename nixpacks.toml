@@ -1,16 +1,15 @@
 [phases.setup]
-packages = ["python3", "python3Packages.pip", "libpq"]
+nixPkgs = ["python3", "python3Packages.pip"]
+aptPkgs = ["libpq-dev", "gcc"]
 
 [phases.install]
-commands = [
-    "pip install --upgrade pip",
-    "pip install -r requirements.txt"
+cmds = [
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
 ]
 
 [phases.build]
-commands = [
-  "python manage.py migrate --noinput"
-]
+cmd = "python manage.py migrate --noinput"
 
-[phases.start]
-command = "bash start.sh"
+[start]
+cmd = "bash start.sh"
