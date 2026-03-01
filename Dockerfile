@@ -14,7 +14,6 @@ RUN mkdir -p /code
 
 WORKDIR /code
 
-# If you want to use pip
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 
