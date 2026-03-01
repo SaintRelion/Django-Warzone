@@ -34,6 +34,9 @@ AUTH_USER_MODEL = "accounts.User"
 
 from sr_libs.model_trigger.settings import *
 
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL")
+
 load_dotenv()
 
 # SMS
