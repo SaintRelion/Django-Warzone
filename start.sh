@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# echo "Applying migrations..."
-# python manage.py migrate --noinput
+echo "Applying migrations..."
+python manage.py migrate --noinput
 
 # # Start Celery worker and beat in background
 # celery -A core worker -l info &
@@ -10,4 +10,4 @@ set -e
 
 # Start main API
 echo "Starting server..."
-exec uvicorn core.wsgi:application --host 0.0.0.0 --port 8000
+exec uvicorn core.asgi:application --host 0.0.0.0 --port 8000

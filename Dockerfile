@@ -20,4 +20,4 @@ RUN pip install -r requirements.txt
 
 COPY . /code
 
-RUN chmod +x /code/start.sh
+ENTRYPOINT ["uvicorn", "core.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
