@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.db.models import Prefetch
 from rest_framework import serializers
 
 from sr_libs.dal.resource import register_resource, register_derived_resource
@@ -8,43 +9,60 @@ from ..payment_history.models import PaymentHistory
 from .models import Billing
 
 
+register_resource(
+    name="billing",
+    model=Billing,
+    operations={
+        "list": True,
+        "retrieve": "__all__",
+        "create": "__all__",
+        "update": "__all__",
+        "delete": False,
+        "archive": True,
+    },
+)
+
+
 class UserBillingDerivedSerializer(DerivedSerializer):
     # Optional filters
-    user_id = serializers.IntegerField(required=False)
-    subscription_id = serializers.IntegerField(required=False)
+    user = serializers.IntegerField(required=False)
+    subscription = serializers.IntegerField(required=False)
     status = serializers.ChoiceField(
         choices=["paid", "partially_paid", "unpaid", "overdue"], required=False
     )
 
     @classmethod
     def list_data(cls, filters):
-        # Base queryset
-        billings_qs = Billing.objects.select_related("user", "subscription").filter(
-            is_archived=False
-        )
+        billings_qs = Billing.objects.select_related(
+            "user", "subscription", "plan"
+        ).filter(is_archived=False)
 
-        # Apply filters manually
-        if "user_id" in filters:
-            billings_qs = billings_qs.filter(user_id=filters["user_id"])
-        if "subscription_id" in filters:
-            billings_qs = billings_qs.filter(subscription_id=filters["subscription_id"])
+        if filters.get("user"):
+            billings_qs = billings_qs.filter(user=filters["user"])
+
+        if filters.get("subscription"):
+            billings_qs = billings_qs.filter(subscription=filters["subscription"])
 
         # Prefetch payments
-        payments_qs = PaymentHistory.objects.filter(
-            status="completed", bill_id__in=billings_qs.values_list("id", flat=True)
+        completed_payments = PaymentHistory.objects.filter(status="completed")
+
+        billings_qs = billings_qs.prefetch_related(
+            Prefetch(
+                "payments",
+                queryset=completed_payments,
+                to_attr="completed_payments",
+            )
         )
-        payments_by_bill = {}
-        for p in payments_qs:
-            payments_by_bill.setdefault(p.bill_id, []).append(p)
 
         results = []
-        for bill in billings_qs:
-            u = bill.user
-            bill_payments = payments_by_bill.get(bill.id, [])
 
-            total_paid = sum(p.amount for p in bill_payments)
-            total_change = sum(p.change for p in bill_payments)
-            total_credits = sum(p.credit for p in bill_payments)
+        for bill in billings_qs:
+            payments = getattr(bill, "completed_payments", [])
+
+            total_paid = sum(p.amount for p in payments)
+            total_change = sum(p.change for p in payments)
+            total_credits = sum(p.credit for p in payments)
+
             remaining = bill.amount - total_paid
 
             if total_paid == 0:
@@ -62,7 +80,11 @@ class UserBillingDerivedSerializer(DerivedSerializer):
                     "subscription": bill.subscription_id,
                     "user": bill.user_id,
                     "plan": bill.plan_id,
-                    "customer": f"{u.first_name} {u.last_name}" if u else "",
+                    "customer": (
+                        f"{bill.user.first_name} {bill.user.last_name}"
+                        if bill.user
+                        else ""
+                    ),
                     "amount": bill.amount,
                     "due_date": bill.due_date,
                     "created_at": bill.created_at,
@@ -76,19 +98,6 @@ class UserBillingDerivedSerializer(DerivedSerializer):
 
         return results
 
-
-register_resource(
-    name="billing",
-    model=Billing,
-    operations={
-        "list": True,
-        "retrieve": "__all__",
-        "create": "__all__",
-        "update": "__all__",
-        "delete": False,
-        "archive": True,
-    },
-)
 
 register_derived_resource(
     name="userbilling",

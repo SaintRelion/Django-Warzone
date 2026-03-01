@@ -44,59 +44,51 @@ register_resource(
 
 
 class UserSubscriptionDerivedSerializer(DerivedSerializer):
-    user_id = serializers.IntegerField(required=False)
+    user = serializers.IntegerField(required=False)
     status = serializers.CharField(required=False)
 
     @classmethod
     def list_data(cls, filters):
-        user_filter = filters.get("user_id")
+        user_filter = filters.get("user")
         status_filter = filters.get("status")
 
-        # Base queryset
-        subs_qs = Subscription.objects.select_related("user")
+        qs = Subscription.objects.select_related("user", "plan")
         if user_filter:
-            subs_qs = subs_qs.filter(user_id=user_filter)
+            qs = qs.filter(user=user_filter)
+
         if status_filter:
-            subs_qs = subs_qs.filter(status=status_filter)
+            qs = qs.filter(status=status_filter)
 
-        subs = list(
-            subs_qs.values(
-                "id",
-                "user_id",
-                "plan_id",
-                "amount",
-                "address",
-                "status",
-                "next_billing_date",
+        results = []
+        for sub in qs:
+            results.append(
+                {
+                    "id": sub.id,
+                    "user": sub.user.id if sub.user else None,
+                    "name": (
+                        f"{sub.user.first_name} {sub.user.last_name}"
+                        if sub.user
+                        else ""
+                    ),
+                    "plan": (
+                        {
+                            "id": sub.plan.id,
+                            "name": sub.plan.name,
+                            "price": sub.plan.price,
+                            "speed_mbps": sub.plan.speed_mbps,
+                            "description": sub.plan.description,
+                        }
+                        if sub.plan
+                        else None
+                    ),
+                    "amount": sub.amount,
+                    "address": sub.address,
+                    "status": sub.status,
+                    "next_billing_date": sub.next_billing_date,
+                }
             )
-        )
 
-        # Prefetch users
-        user_ids = {s["user_id"] for s in subs if s["user_id"]}
-        users_qs = User.objects.filter(id__in=user_ids).values(
-            "id", "first_name", "last_name"
-        )
-        users_map = {u["id"]: f"{u['first_name']} {u['last_name']}" for u in users_qs}
-
-        plan_ids = {s["plan_id"] for s in subs if s["plan_id"]}
-        plans_qs = Plan.objects.filter(id__in=plan_ids).values(
-            "id", "name", "price", "speed_mbps", "description"
-        )
-        plans_map = {p["id"]: p for p in plans_qs}
-
-        # Compose result
-        result = []
-        for s in subs:
-            r = s.copy()
-            # map user
-            r["user"] = r.pop("user_id")
-            r["name"] = users_map.get(r["user"], "")
-            # map plan
-            r["plan"] = plans_map.get(r["plan_id"], {})
-            r.pop("plan_id", None)
-            result.append(r)
-
-        return result
+        return results
 
 
 register_derived_resource(

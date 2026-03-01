@@ -14,5 +14,5 @@ register_resource(
         "delete": False,
         "archive": False,
     },
-    public={"list": [AllowAny]},
+    permissions={"list": [AllowAny]},
 )
