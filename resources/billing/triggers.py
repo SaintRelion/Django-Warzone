@@ -18,9 +18,9 @@ registry.register(
         ScheduledRule(
             name="notify_upcoming_due",
             monitor_condition=lambda bill: True,  # monitor all bills
-            scheduled_at=lambda bill: timezone.now() - timedelta(minutes=1),
+            scheduled_at=lambda bill: timezone.now() + timedelta(minutes=5),
             action_path="resources.billing.actions.send_due_reminder",
-            repeat_every=timedelta(minutes=3),
+            repeat_every=timedelta(days=3),
             stop_condition=lambda bill: is_bill_paid(bill),
         )
     ],
