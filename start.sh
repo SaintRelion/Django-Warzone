@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-echo "Applying migrations..."
-python manage.py migrate --noinput
+# echo "Applying migrations..."
+# python manage.py migrate --noinput
 
 # # Start Celery worker and beat in background
 # celery -A core worker -l info &
