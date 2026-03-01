@@ -9,4 +9,4 @@ celery -A core worker -l info &
 celery -A core beat -l info &
 
 # Start main API
-exec uvicorn core.wsgi:application -host 0.0.0.0 --port 8000
+exec uvicorn core.wsgi:application --host 0.0.0.0 --port 8000
