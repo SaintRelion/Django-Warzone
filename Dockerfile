@@ -21,8 +21,8 @@ COPY . /code
 
 RUN python manage.py migrate
 # Copy start.sh and make it executable
-COPY start.sh /code/start.sh
-RUN chmod +x /code/start.sh
+COPY start.sh /code/entrypoint.sh
+RUN chmod +x /code/entrypoint.sh
 
 # Use start.sh as the container entrypoint
-ENTRYPOINT ["/code/start.sh"]
+ENTRYPOINT ["/code/entrypoint.sh"]
