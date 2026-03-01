@@ -20,4 +20,6 @@ RUN pip install -r requirements.txt
 
 COPY . /code
 
+RUN python manage.py migrate
+
 ENTRYPOINT ["uvicorn", "core.asgi:application", "--host", "0.0.0.0", "--port", "8000"]

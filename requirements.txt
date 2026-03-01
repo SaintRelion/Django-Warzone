@@ -15,11 +15,12 @@ cryptography==46.0.5
 Django==6.0.2
 django-cors-headers==4.9.0
 django-otp==1.7.0
-django-saintrelion-libs @ git+https://github.com/SaintRelion/Django-Fastly.git@b7f88263e5db79be1646466b674e2de4076a83e1
+django-saintrelion-libs @ git+https://github.com/SaintRelion/Django-Fastly.git@1d717ebda47caca86e0a0d9af6873b37ee95e775
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 gevent==25.9.1
 greenlet==3.3.2
+gunicorn==25.1.0
 h11==0.16.0
 idna==3.11
 kombu==5.6.2
