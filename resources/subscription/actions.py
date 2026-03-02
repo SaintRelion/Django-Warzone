@@ -7,13 +7,18 @@ logger = logging.getLogger(__name__)
 def create_initial_billing(subscription):
     from ..billing.models import Billing
 
+    # set next_billing_date to today + 1 month (example)
+    from datetime import date, timedelta
+
+    next_billing_date = date.today() + timedelta(days=30)
+
     Billing.objects.create(
         user=subscription.user,
         subscription=subscription,
         plan=subscription.plan,
         customer=f"{subscription.user.first_name} {subscription.user.last_name}",
         amount=subscription.amount,
-        due_date=subscription.next_billing_date,
+        due_date=next_billing_date,
     )
 
     subject = "Subscription Activated – Billing Details"
@@ -25,7 +30,7 @@ Your subscription has been successfully activated.
 
 Plan: {subscription.plan}
 Billing Amount: {subscription.amount}
-Due Date: {subscription.next_billing_date}
+Due Date: {next_billing_date}
 
 Please ensure payment is completed on or before the due date to avoid service interruption.
 

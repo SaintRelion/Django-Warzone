@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from sr_libs.dal.serializers import DerivedSerializer
+from sr_libs.delivery_channels.services.live import send_live
 
-from ..plan.models import Plan
 from .models import Subscription
-from ..user.models import User
 
 from sr_libs.dal.resource import register_resource, register_derived_resource
 
@@ -18,13 +17,19 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
 
         # automatically set amount from plan price
         validated_data["amount"] = plan.price
+        validated_data["status"] = "pending"
 
-        # set next_billing_date to today + 1 month (example)
-        from datetime import date, timedelta
+        # subscription = super().create(validated_data)
 
-        validated_data["next_billing_date"] = date.today() + timedelta(days=30)
-
-        validated_data["status"] = "active"
+        # send_live(
+        #     subscription.user,
+        #     event="subscription_waiting_approval",
+        #     data={
+        #         "id": subscription.id,
+        #         "plan": subscription.plan.name,
+        #         "status": subscription.status,
+        #     },
+        # )
 
         return super().create(validated_data)
 
@@ -84,7 +89,6 @@ class UserSubscriptionDerivedSerializer(DerivedSerializer):
                     "amount": sub.amount,
                     "address": sub.address,
                     "status": sub.status,
-                    "next_billing_date": sub.next_billing_date,
                 }
             )
 

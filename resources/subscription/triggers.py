@@ -6,7 +6,7 @@ registry.register(
     reactive_rules=[
         ReactiveRule(
             name="create_initial_billing",
-            condition=lambda inst, created: created,
+            condition=lambda inst, created: inst.status == "active",
             action_path="resources.subscription.actions.create_initial_billing",
         )
     ],

@@ -77,13 +77,31 @@ class UserBillingDerivedSerializer(DerivedSerializer):
             results.append(
                 {
                     "id": bill.id,
-                    "subscription": bill.subscription_id,
                     "user": bill.user_id,
-                    "plan": bill.plan_id,
                     "customer": (
                         f"{bill.user.first_name} {bill.user.last_name}"
                         if bill.user
                         else ""
+                    ),
+                    "plan": (
+                        {
+                            "id": bill.plan.id,
+                            "name": bill.plan.name,
+                            "price": bill.plan.price,
+                            "speed_mbps": bill.plan.speed_mbps,
+                            "description": bill.plan.description,
+                        }
+                        if bill.plan
+                        else None
+                    ),
+                    "subscription": (
+                        {
+                            "id": bill.subscription.id,
+                            "amount": bill.subscription.amount,
+                            "status": bill.subscription.status,
+                        }
+                        if bill.subscription
+                        else None
                     ),
                     "amount": bill.amount,
                     "due_date": bill.due_date,

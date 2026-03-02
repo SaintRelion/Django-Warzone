@@ -6,8 +6,10 @@ from ..plan.models import Plan
 
 class Subscription(ArchiveMixin):
     STATUS_CHOICES = [
+        ("pending", "Pending Approval"),
         ("active", "Active"),
-        ("disabled", "Disabled"),
+        ("suspended", "Suspended"),
+        ("cancelled", "Cancelled"),
     ]
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     plan = models.ForeignKey(
@@ -16,4 +18,3 @@ class Subscription(ArchiveMixin):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     address = models.TextField()
     status = models.CharField(max_length=50, choices=STATUS_CHOICES)
-    next_billing_date = models.DateField()
