@@ -14,16 +14,7 @@ SIMPLE_JWT = {
     **ACCOUNTS_SIMPLE_JWT,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
 }
-# REST_FRAMEWORK = {
-#     **REST_FRAMEWORK,
-#     "DEFAULT_RENDERER_CLASSES": [
-#         "rest_framework.renderers.JSONRenderer",
-#         "rest_framework.renderers.BrowsableAPIRenderer",
-#         "django_eventstream.renderers.SSEEventRenderer",
-#         "django_eventstream.renderers.BrowsableAPIEventStreamRenderer",
-#         # Add other renderers as needed
-#     ],
-# }
+ACCOUNTS_REST_FRAMEWORK = REST_FRAMEWORK
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -32,6 +23,7 @@ from sr_libs.delivery_channels.settings import *
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
+DELIVERY_CHANNELS_REST_FRAMEWORK = REST_FRAMEWORK
 EVENTSTREAM_REDIS = {
     "host": os.getenv("EVENTSTREAM_REDIS_HOST"),
     "port": os.getenv("EVENTSTREAM_REDIS_PORT"),
@@ -49,6 +41,16 @@ API_KEY = os.getenv("API_KEY")
 SMS_SENDER_NAME = os.getenv("SMS_SENDER_NAME")
 OTP_EXPIRY_SECONDS = int(os.getenv("OTP_EXPIRY_SECONDS"))
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS"))
+
+
+REST_FRAMEWORK = {
+    **ACCOUNTS_REST_FRAMEWORK,
+    "DEFAULT_RENDERER_CLASSES": [
+        *ACCOUNTS_REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
+        *DELIVERY_CHANNELS_REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
+    ],
+}
+
 
 # ============== DJANGO DEFAULTS ================
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

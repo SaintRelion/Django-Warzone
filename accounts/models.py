@@ -3,6 +3,18 @@ from django.db import models
 
 
 class User(AbstractUser):
+    STATUS_CHOICES = [
+        ("active", "Active"),
+        ("disabled", "Disabled"),
+        ("deactivated", "Deactivated"),
+        ("archived", "Archived"),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="active",
+    )
+
     # Core contact fields
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, blank=True)

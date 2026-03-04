@@ -56,6 +56,7 @@ class MeSerializer(serializers.ModelSerializer):
             "zip_code",
             "service_area",
             "roles",
+            "status",
         ]
 
     def get_roles(self, obj):

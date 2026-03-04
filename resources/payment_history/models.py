@@ -33,8 +33,17 @@ class PaymentHistory(ArchiveMixin):
     # Creation timestamp
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Status (completed, pending, failed, etc.)
-    status = models.CharField(max_length=50)
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("completed", "Completed"),
+        ("voided", "Voided"),
+    ]
+
+    status = models.CharField(
+        max_length=50,
+        choices=STATUS_CHOICES,
+        default="pending",
+    )
 
     # Optional void info
     voided_at = models.DateTimeField(blank=True, null=True)

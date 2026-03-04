@@ -34,6 +34,27 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class SubscriptionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ["status"]
+
+    def update(self, instance, validated_data):
+        instance = super().update(instance, validated_data)
+
+        send_live(
+            instance.user,
+            {
+                "id": instance.id,
+                "resource": "usersubscription",
+                "plan": instance.plan.name,
+                "status": instance.status,
+                "message": f"Your subscription status has been updated to {instance.status}",
+            },
+        )
+        return instance
+
+
 register_resource(
     name="subscription",
     model=Subscription,
@@ -41,7 +62,7 @@ register_resource(
         "list": True,
         "retrieve": "__all__",
         "create": SubscriptionCreateSerializer,
-        "update": "__all__",
+        "update": SubscriptionUpdateSerializer,
         "delete": False,
         "archive": True,
     },
