@@ -18,7 +18,7 @@ def create_initial_billing(subscription):
             user=subscription.user,
             subscription=subscription,
             plan=subscription.plan,
-            customer=f"{subscription.user.first_name} Hello {subscription.user.last_name}",
+            customer=f"{subscription.user.first_name} {subscription.user.last_name}",
             amount=subscription.amount,
             due_date=next_billing_date,
         )
