@@ -3,9 +3,15 @@ from sr_libs.dal.serializers import DerivedSerializer
 from django.db.models import Q
 from .models import User
 
+
+def user_queryset():
+    return User.objects.exclude(status="archived").exclude(groups__name="admin")
+
+
 register_resource(
     name="user",
     model=User,
+    query_viewset=user_queryset,
     operations={
         "list": [
             "id",

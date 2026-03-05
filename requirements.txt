@@ -17,7 +17,7 @@ django-cors-headers==4.9.0
 django-eventstream==5.3.3
 django-grip==3.5.2
 django-otp==1.7.0
-django-saintrelion-libs @ git+https://github.com/SaintRelion/Django-Fastly.git@9194e192324130aa6db9faabaf73e82a3b4bf7de
+django-saintrelion-libs @ git+https://github.com/SaintRelion/Django-Fastly.git@3ef59c91ee8a84bd200d1cea01bd06c40f21871f
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 gevent==25.9.1
