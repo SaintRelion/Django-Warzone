@@ -6,8 +6,6 @@ logger = logging.getLogger(__name__)
 
 def create_initial_billing(subscription):
     from ..billing.models import Billing
-
-    # set next_billing_date to today + 1 month (example)
     from datetime import date, timedelta
 
     existing_future_bill = Billing.objects.filter(
