@@ -11,7 +11,7 @@ urlpatterns = [
     # Services
     path("api/auth/", include("sr_libs.authentication.urls")),
     path("api/otp/", include("sr_libs.otp.urls")),
-    path("api/", include("sr_libs.delivery_channels.urls")),
+    # path("api/", include("sr_libs.delivery_channels.urls")),
     # DAL
     path("api/", include("sr_libs.dal.urls")),
 ]

@@ -42,16 +42,16 @@ class SubscriptionUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
 
-        send_live(
-            instance.user,
-            {
-                "id": instance.id,
-                "resource": "usersubscription",
-                "plan": instance.plan.name,
-                "status": instance.status,
-                "message": f"Your subscription status has been updated to {instance.status}",
-            },
-        )
+        # send_live(
+        #     instance.user,
+        #     {
+        #         "id": instance.id,
+        #         "resource": "usersubscription",
+        #         "plan": instance.plan.name,
+        #         "status": instance.status,
+        #         "message": f"Your subscription status has been updated to {instance.status}",
+        #     },
+        # )
         return instance
 
 

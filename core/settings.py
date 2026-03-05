@@ -24,12 +24,12 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DELIVERY_CHANNELS_REST_FRAMEWORK = REST_FRAMEWORK
-EVENTSTREAM_REDIS = {
-    "host": os.getenv("EVENTSTREAM_REDIS_HOST"),
-    "port": os.getenv("EVENTSTREAM_REDIS_PORT"),
-    "db": os.getenv("EVENTSTREAM_REDIS_DB"),
-    # "password": os.getenv("EVENTSTREAM_REDIS_PASSWORD", None),
-}
+# EVENTSTREAM_REDIS = {
+#     "host": os.getenv("EVENTSTREAM_REDIS_HOST"),
+#     "port": os.getenv("EVENTSTREAM_REDIS_PORT"),
+#     "db": os.getenv("EVENTSTREAM_REDIS_DB"),
+#     # "password": os.getenv("EVENTSTREAM_REDIS_PASSWORD", None),
+# }
 
 from sr_libs.model_trigger.settings import *
 
