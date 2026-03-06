@@ -23,6 +23,9 @@ from sr_libs.delivery_channels.settings import *
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
+SEMAPHORE_API_KEY = os.getenv("SEMAPHORE_API_KEY")
+SEMAPHORE_SMS_SENDER_NAME = os.getenv("SEMAPHORE_SMS_SENDER_NAME")
+
 DELIVERY_CHANNELS_REST_FRAMEWORK = REST_FRAMEWORK
 # EVENTSTREAM_REDIS = {
 #     "host": os.getenv("EVENTSTREAM_REDIS_HOST"),
@@ -36,13 +39,12 @@ from sr_libs.model_trigger.settings import *
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL")
 
-# SMS
-API_KEY = os.getenv("API_KEY")
-SMS_SENDER_NAME = os.getenv("SMS_SENDER_NAME")
+from sr_libs.otp.settings import *
+
 OTP_EXPIRY_SECONDS = int(os.getenv("OTP_EXPIRY_SECONDS"))
-MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS"))
+OTP_MAX_ATTEMPTS = int(os.getenv("OTP_MAX_ATTEMPTS"))
 
-
+# TODO: fix this, na dugayan ta ani agi sa conflict
 REST_FRAMEWORK = {
     **ACCOUNTS_REST_FRAMEWORK,
     "DEFAULT_RENDERER_CLASSES": [
@@ -89,7 +91,6 @@ INSTALLED_APPS = [
     "sr_libs.model_trigger",
     "accounts",
     "resources",
-    "otp_sms",
 ]
 
 MIDDLEWARE = [
