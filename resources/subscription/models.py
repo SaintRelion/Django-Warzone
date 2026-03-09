@@ -1,10 +1,11 @@
 from django.db import models
 from sr_libs.dal.mixins import ArchiveMixin
+from sr_libs.audit_logger.models import AuditModel
 
 from ..plan.models import Plan
 
 
-class Subscription(ArchiveMixin):
+class Subscription(AuditModel, ArchiveMixin):
     STATUS_CHOICES = [
         ("pending", "Pending Approval"),
         ("active", "Active"),

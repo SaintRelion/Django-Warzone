@@ -7,16 +7,18 @@ load_dotenv()
 from sr_libs.authentication.settings import *
 
 CORS_ALLOW_HEADERS = ["*"]
-ACCOUNTS_MIDDLEWARE = MIDDLEWARE
+AUTHENTICATION_MIDDLEWARE = MIDDLEWARE
 
-ACCOUNTS_SIMPLE_JWT = SIMPLE_JWT
+AUTHENTICATION_SIMPLE_JWT = SIMPLE_JWT
 SIMPLE_JWT = {
-    **ACCOUNTS_SIMPLE_JWT,
+    **AUTHENTICATION_SIMPLE_JWT,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
 }
 ACCOUNTS_REST_FRAMEWORK = REST_FRAMEWORK
 
 AUTH_USER_MODEL = "accounts.User"
+
+from sr_libs.audit_logger.settings import *
 
 from sr_libs.delivery_channels.settings import *
 
@@ -47,6 +49,10 @@ OTP_MAX_ATTEMPTS = int(os.getenv("OTP_MAX_ATTEMPTS"))
 # TODO: fix this, na dugayan ta ani agi sa conflict
 REST_FRAMEWORK = {
     **ACCOUNTS_REST_FRAMEWORK,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        SR_LIBS_AUDIT_LOGGER_JWT_AUTHENTICATION,
+        *ACCOUNTS_REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"],
+    ],
     "DEFAULT_RENDERER_CLASSES": [
         *ACCOUNTS_REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
         *DELIVERY_CHANNELS_REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
@@ -89,12 +95,13 @@ INSTALLED_APPS = [
     "sr_libs.delivery_channels",
     "sr_libs.dal",
     "sr_libs.model_trigger",
+    "sr_libs.audit_logger",
     "accounts",
     "resources",
 ]
 
 MIDDLEWARE = [
-    *ACCOUNTS_MIDDLEWARE,
+    *AUTHENTICATION_MIDDLEWARE,
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

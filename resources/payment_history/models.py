@@ -1,9 +1,10 @@
 from django.db import models
 from sr_libs.dal.mixins import ArchiveMixin
+from sr_libs.audit_logger.models import AuditModel
 from ..billing.models import Billing
 
 
-class PaymentHistory(ArchiveMixin):
+class PaymentHistory(AuditModel, ArchiveMixin):
     # FK to Billing
     bill = models.ForeignKey(Billing, on_delete=models.CASCADE, related_name="payments")
 

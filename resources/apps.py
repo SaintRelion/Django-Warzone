@@ -9,7 +9,6 @@ class ResourcesConfig(AppConfig):
         from sr_libs.model_trigger.signals import setup_model_signals
 
         # Serializers
-        import resources.activity_log.serializers
         import resources.billing.serializers
         import resources.payment_history.serializers
         import resources.subscription.serializers

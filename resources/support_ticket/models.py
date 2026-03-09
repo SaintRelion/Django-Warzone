@@ -1,8 +1,9 @@
 from django.db import models
+from sr_libs.audit_logger.models import AuditModel
 from sr_libs.dal.mixins import ArchiveMixin
 
 
-class SupportTicket(ArchiveMixin):
+class SupportTicket(AuditModel, ArchiveMixin):
     PRIORITY_CHOICES = [
         ("low", "Low"),
         ("medium", "Medium"),

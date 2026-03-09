@@ -5,7 +5,12 @@ from .models import User
 
 
 def user_queryset():
-    return User.objects.exclude(status="archived").exclude(groups__name="admin")
+    return User.objects.exclude(
+        Q(status="archived")
+        | Q(groups__name="admin")
+        | Q(is_staff=True)
+        | Q(is_superuser=True)
+    )
 
 
 register_resource(
@@ -50,7 +55,10 @@ class UserSubscribersDerivedSerializer(DerivedSerializer):
     @classmethod
     def list_data(cls, filters):
         users = User.objects.exclude(
-            Q(groups__name="admin") | Q(status="archived")
+            Q(status="archived")
+            | Q(groups__name="admin")
+            | Q(is_staff=True)
+            | Q(is_superuser=True)
         ).values(
             "id",
             "email",

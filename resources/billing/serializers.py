@@ -77,7 +77,17 @@ class UserBillingDerivedSerializer(DerivedSerializer):
             results.append(
                 {
                     "id": bill.id,
-                    "user": bill.user_id,
+                    "user": (
+                        {
+                            "id": bill.user.id,
+                            "first_name": bill.user.first_name,
+                            "last_name": bill.user.last_name,
+                            "email": bill.user.email,
+                            "phone_number": bill.user.phone_number,
+                        }
+                        if bill.user
+                        else None
+                    ),
                     "customer": (
                         f"{bill.user.first_name} {bill.user.last_name}"
                         if bill.user

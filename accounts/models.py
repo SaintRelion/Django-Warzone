@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from sr_libs.audit_logger.models import AuditModel
 
 
-class User(AbstractUser):
+class User(AbstractUser, AuditModel):
     STATUS_CHOICES = [
         ("active", "Active"),
         ("disabled", "Disabled"),
