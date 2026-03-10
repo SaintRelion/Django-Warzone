@@ -7,7 +7,6 @@ load_dotenv()
 from sr_libs.authentication.settings import *
 
 CORS_ALLOW_HEADERS = ["*"]
-AUTHENTICATION_MIDDLEWARE = MIDDLEWARE
 
 AUTHENTICATION_SIMPLE_JWT = SIMPLE_JWT
 SIMPLE_JWT = {
@@ -15,6 +14,11 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
 }
 ACCOUNTS_REST_FRAMEWORK = REST_FRAMEWORK
+
+SR_AUTHENTICATION_ACCOUNT_STATUS_MESSAGE = {
+    "disabled": "Your account has been disabled by the admin.",
+    "deactivated": "Your account has been deactivated by the admin.",
+}
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -101,7 +105,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    *AUTHENTICATION_MIDDLEWARE,
+    *SR_AUTHENTICATION_MIDDLEWARE,
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

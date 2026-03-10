@@ -4,6 +4,8 @@ from sr_libs.audit_logger.models import AuditModel
 
 
 class User(AbstractUser, AuditModel):
+    AUDIT_SENSITIVE_FIELDS = ["password"]
+
     STATUS_CHOICES = [
         ("active", "Active"),
         ("disabled", "Disabled"),

@@ -28,7 +28,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             if validated_data["username"] is None:
                 raise serializers.ValidationError("Email is required for username.")
 
-        user = User.objects.create(**validated_data)
+        user = User(**validated_data)
         user.set_password(password)
         user.save()
 
