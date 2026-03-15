@@ -42,7 +42,8 @@ class MonthlyPaymentReportDerivedSerializer(DerivedSerializer):
         start_date, end_date = cls.get_month_range(month + 1, year)
 
         # Pull all user billings from the derived resource
-        user_billings = UserBillingDerivedSerializer.list_data(filters={})
+        user_billings_qs = UserBillingDerivedSerializer.get_queryset(filters={})
+        user_billings = UserBillingDerivedSerializer.list_data(user_billings_qs)
 
         # Filter by month
         bills_for_month = [
@@ -76,6 +77,7 @@ class MonthlyPaymentReportDerivedSerializer(DerivedSerializer):
                     "total_credits": billing["total_credits"],
                     "status": billing["status"],
                     "plan": billing["plan"]["name"] if billing["plan"] else "",
+                    "overdue": f"{billing["overdue"]}",
                 }
             )
 

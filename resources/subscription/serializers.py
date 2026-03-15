@@ -74,19 +74,18 @@ class UserSubscriptionDerivedSerializer(DerivedSerializer):
     status = serializers.CharField(required=False)
 
     @classmethod
-    def list_data(cls, filters):
-        user_filter = filters.get("user")
-        status_filter = filters.get("status")
-
+    def get_queryset(cls, filters):
         qs = Subscription.objects.select_related("user", "plan")
-        if user_filter:
-            qs = qs.filter(user=user_filter)
+        if user := filters.get("user"):
+            qs = qs.filter(user=user)
+        if status := filters.get("status"):
+            qs = qs.filter(status=status)
+        return qs
 
-        if status_filter:
-            qs = qs.filter(status=status_filter)
-
+    @classmethod
+    def list_data(cls, queryset):
         results = []
-        for sub in qs:
+        for sub in queryset:
             results.append(
                 {
                     "id": sub.id,

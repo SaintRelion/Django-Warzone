@@ -1,5 +1,5 @@
 from django.db import models
-from sr_libs.audit_logger.models import AuditModel
+from sr_libs.audit_logger.mixins import AuditMixin
 from sr_libs.dal.mixins import ArchiveMixin
 
 from ..plan.models import Plan
@@ -7,7 +7,10 @@ from ..plan.models import Plan
 from ..subscription.models import Subscription
 
 
-class Billing(AuditModel, ArchiveMixin):
+class Billing(AuditMixin, ArchiveMixin):
+    class Meta:
+        ordering = ["id"]
+
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.PROTECT, related_name="bills")

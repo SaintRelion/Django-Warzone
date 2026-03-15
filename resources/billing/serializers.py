@@ -32,21 +32,20 @@ class UserBillingDerivedSerializer(DerivedSerializer):
     )
 
     @classmethod
-    def list_data(cls, filters):
-        billings_qs = Billing.objects.select_related(
-            "user", "subscription", "plan"
-        ).filter(is_archived=False)
+    def get_queryset(cls, filters):
+        qs = Billing.objects.select_related("user", "subscription", "plan").filter(
+            is_archived=False
+        )
 
-        if filters.get("user"):
-            billings_qs = billings_qs.filter(user=filters["user"])
+        # Apply filters
+        if user_id := filters.get("user"):
+            qs = qs.filter(user=user_id)
+        if subscription_id := filters.get("subscription"):
+            qs = qs.filter(subscription=subscription_id)
 
-        if filters.get("subscription"):
-            billings_qs = billings_qs.filter(subscription=filters["subscription"])
-
-        # Prefetch payments
+        # Prefetch only completed payments
         completed_payments = PaymentHistory.objects.filter(status="completed")
-
-        billings_qs = billings_qs.prefetch_related(
+        qs = qs.prefetch_related(
             Prefetch(
                 "payments",
                 queryset=completed_payments,
@@ -54,9 +53,15 @@ class UserBillingDerivedSerializer(DerivedSerializer):
             )
         )
 
+        return qs
+
+    @classmethod
+    def list_data(cls, queryset):
         results = []
 
-        for bill in billings_qs:
+        today = timezone.now().date()
+
+        for bill in queryset:
             payments = getattr(bill, "completed_payments", [])
 
             total_paid = sum(p.amount for p in payments)
@@ -65,12 +70,21 @@ class UserBillingDerivedSerializer(DerivedSerializer):
 
             remaining = bill.amount - total_paid
 
+            overdue_days = 0
+
             if total_paid == 0:
-                status = (
-                    "overdue" if timezone.now().date() > bill.due_date else "unpaid"
-                )
+                if today > bill.due_date:
+                    status = "overdue"
+                    overdue_days = (today - bill.due_date).days
+                else:
+                    status = "unpaid"
+
             elif remaining > 0:
-                status = "partially_paid"
+                if today > bill.due_date:
+                    status = "overdue"
+                    overdue_days = (today - bill.due_date).days
+                else:
+                    status = "partially_paid"
             else:
                 status = "paid"
 
@@ -121,6 +135,7 @@ class UserBillingDerivedSerializer(DerivedSerializer):
                     "total_credits": total_credits,
                     "remaining": max(remaining, 0),
                     "status": status,
+                    "overdue": overdue_days,
                 }
             )
 

@@ -3,20 +3,9 @@ from sr_libs.dal.serializers import DerivedSerializer
 from django.db.models import Q
 from .models import User
 
-
-def user_queryset():
-    return User.objects.exclude(
-        Q(status="archived")
-        | Q(groups__name="admin")
-        | Q(is_staff=True)
-        | Q(is_superuser=True)
-    )
-
-
 register_resource(
     name="user",
     model=User,
-    query_viewset=user_queryset,
     operations={
         "list": [
             "id",
@@ -53,8 +42,8 @@ register_resource(
 
 class UserSubscribersDerivedSerializer(DerivedSerializer):
     @classmethod
-    def list_data(cls, filters):
-        users = User.objects.exclude(
+    def get_queryset(cls, filters):
+        qs = User.objects.exclude(
             Q(status="archived")
             | Q(groups__name="admin")
             | Q(is_staff=True)
@@ -73,7 +62,11 @@ class UserSubscribersDerivedSerializer(DerivedSerializer):
             "status",
         )
 
-        return list(users)
+        return qs
+
+    @classmethod
+    def list_data(cls, queryset):
+        return list(queryset)
 
 
 register_derived_resource(

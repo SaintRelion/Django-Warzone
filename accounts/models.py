@@ -1,9 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from sr_libs.audit_logger.models import AuditModel
+from sr_libs.audit_logger.mixins import AuditMixin
 
 
-class User(AbstractUser, AuditModel):
+class User(AbstractUser, AuditMixin):
+    class Meta:
+        ordering = ["id"]
+
     AUDIT_SENSITIVE_FIELDS = ["password"]
 
     STATUS_CHOICES = [

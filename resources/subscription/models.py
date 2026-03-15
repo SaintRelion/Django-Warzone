@@ -1,11 +1,14 @@
 from django.db import models
 from sr_libs.dal.mixins import ArchiveMixin
-from sr_libs.audit_logger.models import AuditModel
+from sr_libs.audit_logger.mixins import AuditMixin
 
 from ..plan.models import Plan
 
 
-class Subscription(AuditModel, ArchiveMixin):
+class Subscription(AuditMixin, ArchiveMixin):
+    class Meta:
+        ordering = ["id"]
+
     STATUS_CHOICES = [
         ("pending", "Pending Approval"),
         ("active", "Active"),

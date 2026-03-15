@@ -1,9 +1,12 @@
 from django.db import models
-from sr_libs.audit_logger.models import AuditModel
+from sr_libs.audit_logger.mixins import AuditMixin
 from sr_libs.dal.mixins import ArchiveMixin
 
 
-class SupportTicket(AuditModel, ArchiveMixin):
+class SupportTicket(AuditMixin, ArchiveMixin):
+    class Meta:
+        ordering = ["id"]
+
     PRIORITY_CHOICES = [
         ("low", "Low"),
         ("medium", "Medium"),

@@ -1,38 +1,41 @@
 from pathlib import Path
+from datetime import timedelta
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-from sr_libs.authentication.settings import *
+from sr_libs.authentication.config import SRAuthenticationConfig
 
-CORS_ALLOW_HEADERS = ["*"]
+SR_AUTHENTICATION_CONFIG = SRAuthenticationConfig(
+    ACCOUNT_STATUS_MESSAGE={
+        "disabled": "Your account has been disabled by the admin.",
+        "deactivated": "Your account has been deactivated by the admin.",
+    }
+)
 
-AUTHENTICATION_SIMPLE_JWT = SIMPLE_JWT
-SIMPLE_JWT = {
-    **AUTHENTICATION_SIMPLE_JWT,
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
-}
-ACCOUNTS_REST_FRAMEWORK = REST_FRAMEWORK
+from sr_libs.dal.config import SRDALConfig
 
-SR_AUTHENTICATION_ACCOUNT_STATUS_MESSAGE = {
-    "disabled": "Your account has been disabled by the admin.",
-    "deactivated": "Your account has been deactivated by the admin.",
-}
+SR_DAL_CONFIG = SRDALConfig(PAGE_SIZE=800)
 
-AUTH_USER_MODEL = "accounts.User"
+from sr_libs.delivery_channels.config import SRDeliveryChannelsConfig
 
-from sr_libs.audit_logger.settings import *
+SR_DELIVERY_CHANNELS_CONFIG = SRDeliveryChannelsConfig(
+    EMAIL_HOST_USER=os.getenv("EMAIL_HOST_USER"),
+    EMAIL_HOST_PASSWORD=os.getenv("EMAIL_HOST_PASSWORD"),
+    DEFAULT_FROM_EMAIL=os.getenv("EMAIL_HOST_USER"),
+    SEMAPHORE_API_KEY=os.getenv("SEMAPHORE_API_KEY"),
+    SEMAPHORE_SMS_SENDER_NAME=os.getenv("SEMAPHORE_SMS_SENDER_NAME"),
+)
 
-from sr_libs.delivery_channels.settings import *
+EMAIL_BACKEND = SR_DELIVERY_CHANNELS_CONFIG.EMAIL_BACKEND
+EMAIL_HOST = SR_DELIVERY_CHANNELS_CONFIG.EMAIL_HOST
+EMAIL_USE_TLS = SR_DELIVERY_CHANNELS_CONFIG.EMAIL_USE_TLS
+EMAIL_PORT = SR_DELIVERY_CHANNELS_CONFIG.EMAIL_PORT
+EMAIL_HOST_USER = SR_DELIVERY_CHANNELS_CONFIG.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = SR_DELIVERY_CHANNELS_CONFIG.EMAIL_HOST_PASSWORD
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-SEMAPHORE_API_KEY = os.getenv("SEMAPHORE_API_KEY")
-SEMAPHORE_SMS_SENDER_NAME = os.getenv("SEMAPHORE_SMS_SENDER_NAME")
-
-DELIVERY_CHANNELS_REST_FRAMEWORK = REST_FRAMEWORK
 # EVENTSTREAM_REDIS = {
 #     "host": os.getenv("EVENTSTREAM_REDIS_HOST"),
 #     "port": os.getenv("EVENTSTREAM_REDIS_PORT"),
@@ -40,29 +43,24 @@ DELIVERY_CHANNELS_REST_FRAMEWORK = REST_FRAMEWORK
 #     # "password": os.getenv("EVENTSTREAM_REDIS_PASSWORD", None),
 # }
 
-from sr_libs.model_trigger.settings import *
+from sr_libs.model_trigger.config import SRModelTriggerConfig
 
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_BROKER_URL")
+SR_MODEL_TRIGGER_CONFIG = SRModelTriggerConfig(
+    CELERY_BROKER_URL=os.getenv("CELERY_BROKER_URL"),
+    CELERY_RESULT_BACKEND=os.getenv("CELERY_BROKER_URL"),
+)
+CELERY_BROKER_URL = SR_MODEL_TRIGGER_CONFIG.CELERY_BROKER_URL
+CELERY_RESULT_BACKEND = SR_MODEL_TRIGGER_CONFIG.CELERY_RESULT_BACKEND
 
-from sr_libs.otp.settings import *
+from sr_libs.otp.config import SROTPConfig
 
-OTP_EXPIRY_SECONDS = int(os.getenv("OTP_EXPIRY_SECONDS"))
-OTP_MAX_ATTEMPTS = int(os.getenv("OTP_MAX_ATTEMPTS"))
+SR_OTP_CONFIG = SROTPConfig(
+    OTP_EXPIRY_SECONDS=int(os.getenv("OTP_EXPIRY_SECONDS")),
+    OTP_MAX_ATTEMPTS=int(os.getenv("OTP_MAX_ATTEMPTS")),
+)
 
-# TODO: fix this, na dugayan ta ani agi sa conflict
-REST_FRAMEWORK = {
-    **ACCOUNTS_REST_FRAMEWORK,
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        SR_LIBS_AUDIT_LOGGER_JWT_AUTHENTICATION,
-        *ACCOUNTS_REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"],
-    ],
-    "DEFAULT_RENDERER_CLASSES": [
-        *ACCOUNTS_REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
-        *DELIVERY_CHANNELS_REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"],
-    ],
-}
 
+## ====== Start of Django Settings =====
 
 # ============== DJANGO DEFAULTS ================
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,6 +77,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+CORS_ALLOW_ALL_ORIGINS = SR_AUTHENTICATION_CONFIG.CORS_ALLOW_ALL_ORIGINS
+CORS_ALLOW_HEADERS = ["*"]
 
 # Application definition
 
@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third Parties
+    "django_filters",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
@@ -104,8 +105,33 @@ INSTALLED_APPS = [
     "resources",
 ]
 
+AUTH_USER_MODEL = "accounts.User"
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=300),
+    "REFRESH_TOKEN_LIFETIME": SR_AUTHENTICATION_CONFIG.REFRESH_TOKEN_LIFETIME,
+    "ROTATE_REFRESH_TOKENS": SR_AUTHENTICATION_CONFIG.ROTATE_REFRESH_TOKENS,
+    "BLACKLIST_AFTER_ROTATION": SR_AUTHENTICATION_CONFIG.BLACKLIST_AFTER_ROTATION,
+    "AUTH_HEADER_TYPES": SR_AUTHENTICATION_CONFIG.AUTH_HEADER_TYPES,
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": SR_AUTHENTICATION_CONFIG.DEFAULT_AUTHENTICATION_CLASSES,
+    "DEFAULT_PERMISSION_CLASSES": SR_AUTHENTICATION_CONFIG.DEFAULT_PERMISSION_CLASSES,
+    "DEFAULT_RENDERER_CLASSES": [
+        *SR_AUTHENTICATION_CONFIG.DEFAULT_RENDERER_CLASSES,
+        # *SR_DELIVERY_CHANNELS_CONFIG.EVENTSTREAM_DEFAULT_RENDERERS
+    ],
+    "DEFAULT_PAGINATION_CLASS": SR_DAL_CONFIG.DEFAULT_PAGINATION_CLASS,
+    "PAGE_SIZE": SR_DAL_CONFIG.PAGE_SIZE,
+    "DEFAULT_FILTER_BACKENDS": SR_DAL_CONFIG.DEFAULT_FILTER_BACKENDS,
+}
+
+AUTHENTICATION_BACKENDS = SR_AUTHENTICATION_CONFIG.AUTHENTICATION_BACKENDS
+
+
 MIDDLEWARE = [
-    *SR_AUTHENTICATION_MIDDLEWARE,
+    *SR_AUTHENTICATION_CONFIG.MIDDLEWARE,
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

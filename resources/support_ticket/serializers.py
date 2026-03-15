@@ -12,4 +12,5 @@ register_resource(
         "delete": False,
         "archive": True,
     },
+    filterset_fields=["status", "priority", "user", "is_archived"],
 )

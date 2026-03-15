@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from sr_libs.authentication.resource import define_register, define_me
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
@@ -39,6 +40,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
+define_register(serializer=UserRegisterSerializer)
+
+
 class MeSerializer(serializers.ModelSerializer):
     roles = serializers.SerializerMethodField()
 
@@ -61,3 +65,6 @@ class MeSerializer(serializers.ModelSerializer):
 
     def get_roles(self, obj):
         return list(obj.groups.values_list("name", flat=True))
+
+
+define_me(serializer=MeSerializer)

@@ -3,6 +3,9 @@ from sr_libs.dal.mixins import ArchiveMixin
 
 
 class Plan(ArchiveMixin):
+    class Meta:
+        ordering = ["id"]
+
     STATUS_CHOICES = [
         ("active", "Active"),
         ("disabled", "Disabled"),
