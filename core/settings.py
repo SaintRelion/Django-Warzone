@@ -16,7 +16,7 @@ SR_AUTHENTICATION_CONFIG = SRAuthenticationConfig(
 
 from sr_libs.dal.config import SRDALConfig
 
-SR_DAL_CONFIG = SRDALConfig(PAGE_SIZE=800)
+SR_DAL_CONFIG = SRDALConfig(PAGE_SIZE=200)
 
 from sr_libs.delivery_channels.config import SRDeliveryChannelsConfig
 
