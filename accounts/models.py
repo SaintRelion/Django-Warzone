@@ -31,17 +31,7 @@ class User(AbstractUser, AuditMixin):
     barangay = models.CharField(max_length=255, blank=True)
     zip_code = models.CharField(max_length=20, blank=True)
 
-    # Service area — assuming you have predefined choices
-    SERVICE_AREA_CHOICES = [
-        ("katipunan", "Katipunan"),
-        ("roxas", "Roxas"),
-        ("piñan", "Piñan"),
-        ("osmeña", "Osmeña"),
-        ("polanco", "Polanco"),
-    ]
-    service_area = models.CharField(
-        max_length=50, choices=SERVICE_AREA_CHOICES, blank=True
-    )
+    service_area = models.CharField(max_length=50, blank=True)
 
     # Optional: override first_name/last_name length if needed
     first_name = models.CharField(max_length=150)

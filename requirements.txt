@@ -18,7 +18,7 @@ django-eventstream==5.3.3
 django-filter==25.2
 django-grip==3.5.2
 django-otp==1.7.0
-django-saintrelion-libs @ git+https://github.com/SaintRelion/Django-Fastly.git@9df736447f9db1992247837aea419d5ef6608923
+django-saintrelion-libs @ git+https://oauth2:${SR_LEGACY_TOKEN}@github.com/SaintRelion/Django-Fastly.git@9df736447f9db1992247837aea419d5ef6608923
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 gevent==25.9.1
